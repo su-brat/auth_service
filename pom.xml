@@ -11,8 +11,8 @@
 	<groupId>com.status_app</groupId>
 	<artifactId>auth_service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>authgateway</name>
-	<description>Auth handling &amp; API gateway using Spring Boot</description>
+	<name>auth_service</name>
+	<description>Authentication and authorization service using Spring Boot</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -84,6 +84,12 @@
 			<artifactId>jjwt-impl</artifactId>
 			<version>0.12.6</version>
 			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.0.2</version>
 		</dependency>
 
 	</dependencies>
