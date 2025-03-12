@@ -19,6 +19,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-        return org.springframework.security.core.userdetails.User.builder().username(user.getUsername()).password(user.getPassword()).roles(user.getRoles().stream().map(Enum::name).toArray(String[]::new)).build();
+        return org.springframework.security.core.userdetails.User.builder()
+            .username(user.getUsername())
+            .password(user.getPassword())
+            .roles(user.getRoles().stream().map(Enum::name).toArray(String[]::new))
+            .build();
     }
 }
