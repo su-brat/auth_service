@@ -29,7 +29,7 @@ public class SpringSecurity {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/public/**", "/user/new", "/user/login", "/admin/login").permitAll()
+                        .requestMatchers("/swagger/**", "/api-docs/**", "/api/public/**", "/user/new", "/user/login", "/admin/login").permitAll()
                         .requestMatchers("/api/**", "/user/**").authenticated()
                         .requestMatchers("/api/admin/**", "/admin/**").hasRole(Role.ADMIN.toString())
                         .anyRequest().authenticated())
