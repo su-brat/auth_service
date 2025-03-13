@@ -1,0 +1,11 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://swagatikam1964:statusApp123@status-app.wnocd.mongodb.net/?retryWrites=true&w=majority&appName=status-app
+      database: users
+
+server:
+  port: 8081
+
+jwt:
+  secret: TaK+HaV^uvCHEFsEVfypW#7g9^k*Z8$V
