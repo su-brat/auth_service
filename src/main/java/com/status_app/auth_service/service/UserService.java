@@ -35,7 +35,7 @@ public class UserService {
     public User createAdmin(User user) {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setRoles(Set.of(Role.ADMIN));
+            user.setRoles(Set.of(Role.USER, Role.ADMIN));
             log.info("Creating admin: {}", user);
             return userRepository.save(user);
         } catch (Exception e) {
@@ -50,6 +50,16 @@ public class UserService {
             return userRepository.findByUsername(username);
         } catch (Exception e) {
             log.error("Error logging in user: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public User getUserByEmail(String email) {
+        try {
+            log.info("Logging in user by email: {}", email);
+            return userRepository.findByEmail(email);
+        } catch (Exception e) {
+            log.error("Error logging in user by email: {}", e.getMessage(), e);
             throw e;
         }
     }

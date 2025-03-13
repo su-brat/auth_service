@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +39,7 @@ public class UserController {
     private JwtUtility jwtUtility;
 
     @PostMapping("/verify")
-    public ResponseEntity<User> authenticate() {
+    public ResponseEntity<?> authenticate() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
@@ -47,15 +48,26 @@ public class UserController {
             return new ResponseEntity<>(user, HttpStatus.OK);
         } catch (Exception e) {
             log.error("Unable to authenticate: {}", e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseTokenDTO> login(@RequestBody LoginRequestDTO requestBody) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO requestBody) {
         try {
             String username = requestBody.getUsername();
             String password = requestBody.getPassword();
+            if (username == null) {
+                String email = requestBody.getEmail();
+                if (email == null) {
+                    throw new UsernameNotFoundException("Username or email is required");
+                }
+                User user = userService.getUserByEmail(email);
+                if (user == null) {
+                    throw new UsernameNotFoundException("User not found with email: " + email);
+                }
+                username = user.getUsername();
+            }
             log.info("Logging in user: {}", username);
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password));
@@ -64,16 +76,16 @@ public class UserController {
             log.info("Authenticated user: {}, and generated JWT", username);
             return new ResponseEntity<>(new ResponseTokenDTO(jwt), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
     }
 
     @PostMapping("/new")
-    public ResponseEntity<User> signup(@RequestBody User user) {
+    public ResponseEntity<?> signup(@RequestBody User user) {
         try {
             return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
         } catch (Exception e)   {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }
