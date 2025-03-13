@@ -2,7 +2,7 @@ spring:
   data:
     mongodb:
       uri: mongodb+srv://swagatikam1964:statusApp123@status-app.wnocd.mongodb.net/?retryWrites=true&w=majority&appName=status-app
-      database: users
+      database: users-dev
 
 server:
   port: 8081
