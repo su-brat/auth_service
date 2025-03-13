@@ -14,7 +14,7 @@ import java.util.Map;
 @Component
 public class JwtUtility {
 
-    @Value("${jwt.secret.key}")
+    @Value("${jwt.secret}")
     private String SECRET_KEY;
 
     private SecretKey getSigningKey() {
