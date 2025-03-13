@@ -31,8 +31,8 @@ public class SpringSecurity {
         return http.authorizeHttpRequests(request -> request
                         .requestMatchers(
                                 "/swagger-ui/**",
-                                "/swagger-ui.html/**",
                                 "/api-docs/**",
+                                "/v3/api-docs/**",
                                 "/api/public/**",
                                 "/user/new",
                                 "/user/login",
