@@ -5,8 +5,9 @@ import lombok.NonNull;
 
 @Data
 public class LoginRequestDTO {
-    @NonNull
     private String username;
+
+    private String email;
 
     @NonNull
     private String password;
