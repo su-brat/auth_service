@@ -7,15 +7,16 @@ import com.status_app.auth_service.jwt.JwtUtility;
 import com.status_app.auth_service.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -67,11 +68,11 @@ public class AuthController {
             if (username == null) {
                 String email = requestBody.getEmail();
                 if (email == null) {
-                    throw new UsernameNotFoundException("Username or email is required");
+                    throw new BadRequestException("Bad credentials");
                 }
                 UserDTO user = userService.getUserByEmail(email);
                 if (user == null) {
-                    throw new UsernameNotFoundException("User not found with email: " + email);
+                    throw new BadCredentialsException("Bad credentials");
                 }
                 username = user.getUsername();
             }

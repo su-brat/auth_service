@@ -10,7 +10,7 @@ import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,11 +60,12 @@ public class UserService {
             log.info("Logging in user: {}", username);
             User user = userRepository.findByUsername(username);
             if (user == null) {
-                throw new UsernameNotFoundException("User not found with username: " + username);
+                log.error("User not found with username: {}", username);
+                throw new BadCredentialsException("Bad credential");
             }
             return mapper.map(user, UserDTO.class);
         } catch (Exception e) {
-            log.error("Error logging in user: {}", e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw e;
         }
     }
@@ -74,11 +75,12 @@ public class UserService {
             log.info("Logging in user by email: {}", email);
             User user = userRepository.findByEmail(email);
             if (user == null) {
-                throw new UsernameNotFoundException("User not found with email: " + email);
+                log.error("User not found with email: {}", email);
+                throw new BadCredentialsException("Bad credentials");
             }
             return mapper.map(user, UserDTO.class);
         } catch (Exception e) {
-            log.error("Error logging in user by email: {}", e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw e;
         }
     }
