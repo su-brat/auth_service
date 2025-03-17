@@ -35,8 +35,7 @@ public class SpringSecurity {
                                 "/v3/api-docs/**",
                                 "/api/public/**",
                                 "/user/new",
-                                "/user/login",
-                                "/admin/login",
+                                "/auth/login",
                                 "/auth/refresh"
                         ).permitAll()
                         .requestMatchers("/api/**", "/user/**").authenticated()
