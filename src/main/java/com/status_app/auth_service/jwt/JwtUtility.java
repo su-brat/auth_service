@@ -1,6 +1,7 @@
 package com.status_app.auth_service.jwt;
 
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
@@ -15,10 +16,18 @@ import java.util.Map;
 public class JwtUtility {
 
     @Value("${jwt.secret}")
-    private String SECRET_KEY;
+    private String secretKey;
+
+    @Getter
+    @Value("${jwt.access_token_exp_secs}")
+    private long accessTokenExpirySeconds;
+
+    @Getter
+    @Value("${jwt.refresh_token_exp_secs}")
+    private long refreshTokenExpirySeconds;
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     public String extractUsername(String token) {
@@ -47,6 +56,17 @@ public class JwtUtility {
         return createToken(claims, username);
     }
 
+    public String generateRefreshToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        return Jwts.builder()
+                .claims(claims)
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * refreshTokenExpirySeconds)) // 7 days expiration
+                .signWith(getSigningKey())
+                .compact();
+    }
+
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .claims(claims)
@@ -54,14 +74,16 @@ public class JwtUtility {
                 .header().empty().add("typ","JWT")
                 .and()
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 50)) // 5 minutes expiration time
+                .expiration(new Date(System.currentTimeMillis() + 1000 * accessTokenExpirySeconds)) // 10 minutes expiration time
                 .signWith(getSigningKey())
                 .compact();
     }
 
     public Boolean validateToken(String token) {
-        return !isTokenExpired(token);
+        try {
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
     }
-
-
 }

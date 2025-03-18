@@ -9,3 +9,5 @@ server:
 
 jwt:
   secret: Prod%Secret%Key%For%Jwt
+  refresh_token_exp_secs: 604800
+  access_token_exp_secs: 600

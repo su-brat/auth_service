@@ -35,8 +35,8 @@ public class SpringSecurity {
                                 "/v3/api-docs/**",
                                 "/api/public/**",
                                 "/user/new",
-                                "/user/login",
-                                "/admin/login"
+                                "/auth/login",
+                                "/auth/refresh"
                         ).permitAll()
                         .requestMatchers("/api/**", "/user/**").authenticated()
                         .requestMatchers("/api/admin/**", "/admin/**").hasRole(Role.ADMIN.toString())
@@ -45,11 +45,6 @@ public class SpringSecurity {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
-//    @Autowired
-//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -5,14 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequestDTO {
-    private String username;
-
-    private String email;
+public class AuthTokenDTO {
 
     @NonNull
-    private String password;
+    private String token;
 }
