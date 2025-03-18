@@ -9,7 +9,7 @@ import lombok.NonNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseTokenDTO {
+public class AuthTokenDTO {
 
     @NonNull
     private String token;

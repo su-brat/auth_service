@@ -1,9 +1,11 @@
 package com.status_app.auth_service.controller;
 
 import com.status_app.auth_service.dto.CreateUserDTO;
+import com.status_app.auth_service.dto.ResponseDTO;
 import com.status_app.auth_service.dto.UserDTO;
 import com.status_app.auth_service.entity.Role;
-import com.status_app.auth_service.service.UserService;
+import com.status_app.auth_service.service.IAuthService;
+import com.status_app.auth_service.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,21 +22,30 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AdminController {
 
+    private final IUserService userService;
+    private final IAuthService authService;
+
     @Autowired
-    private UserService userService;
+    public AdminController(IUserService userService, IAuthService authService) {
+        this.userService = userService;
+        this.authService = authService;
+    }
 
     @PostMapping("/new")
-    public ResponseEntity<UserDTO> createUserOrAdmin(@RequestBody CreateUserDTO user) {
+    public ResponseEntity<ResponseDTO<UserDTO>> createUserOrAdmin(@RequestBody CreateUserDTO user) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Authentication authentication = authService.getAuthContext();
             log.info("Creating user using admin: {}", authentication.getName());
             if (user.getRoles().contains(Role.ADMIN)) {
-                return new ResponseEntity<>(userService.createAdmin(user), HttpStatus.CREATED);
+                ResponseDTO<UserDTO> resp = new ResponseDTO<>(userService.createAdmin(user), "Admin user created", "Success");
+                return new ResponseEntity<>(resp, HttpStatus.CREATED);
             }
-            return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
+            ResponseDTO<UserDTO> userDTO = new ResponseDTO<>(userService.createUser(user), "User created", "Success");
+            return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ResponseDTO<UserDTO> resp = new ResponseDTO<>(null, "Could not create user.", "Failed");
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -11,21 +11,37 @@ import java.util.Set;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@Service
 @Slf4j
-public class UserService {
+@Service
+public class UserServiceImpl implements IUserService {
+
+    private final IUserRepository userRepository;
+
+    private final ModelMapper mapper;
 
     @Autowired
-    IUserRepository userRepository;
-
-    @Autowired
-    ModelMapper mapper;
+    public UserServiceImpl(IUserRepository userRepository, ModelMapper mapper) {
+        this.userRepository = userRepository;
+        this.mapper = mapper;
+    }
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Override
+    public UserDTO getAuthenticatedUser(Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            return getUser(username);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw e;
+        }
+    }
 
     public UserDTO createUser(CreateUserDTO userDTO) {
         try {
